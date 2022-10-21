@@ -4,105 +4,108 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class model {
-
     private String message;
     private String key;
     private String crypt;
-
-
-    public String cryptString(String message, String key){
+    private String file;
+    public model() throws IOException {
+    }
+    public void setFile(String file){
+        this.file = file;
+    }
+    public void setMessage(String message) {
+        this.message = message;
+    }
+    public void setKey(String key) {
+        this.key = key;
+    }
+    public String getCrypt() {
+        return crypt;
+    }
+    public void cryptString() {
         String result = "";
-        while (key.length() < message.length()){
-            key = expandkey(key);
+        while (key.length() < message.length()) {
+            key = expandKey(key);
         }
-        for (int i = 0 ; i < message.length(); i++){
+        for (int i = 0 ; i < message.length() ; i++) {
             result += (char)crypt(message.charAt(i), key.charAt(i));
         }
-        return result;
+        crypt = result;
     }
-
     private int crypt(int m, int k) {
-        return m^k;
+        return m ^ k;
     }
 
 
-    private String expandkey(String key) {
-        return key+key;
+    private String expandKey(String key) {
+        return key + key;
     }
-
-
-    public String decryptString(String crypt, String key){
+    public void decryptString() {
         String result = "";
-        while (key.length() < crypt.length()){
-            key = deexpandkey(key);
+        while (key.length() < crypt.length()) {
+            key = expandKey(key);
         }
-        for (int i = 0 ; i < crypt.length(); i++){
-            result += (char)decrypt(crypt.charAt(i), key.charAt(i));
+        for (int i = 0; i < crypt.length(); i++) {
+            result += (char) decrypt(crypt.charAt(i), key.charAt(i));
         }
-        return result;
+        message = result;
     }
-
     private int decrypt(int m, int k) {
-        return m^k;
+        return m ^ k;
     }
+    public StringBuilder Filereader() {
+        StringBuilder sb = null;
+        try (InputStream in = new FileInputStream(file);
+             BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+            String str = null;
+            sb = new StringBuilder(8192);
+            while ((str = r.readLine()) != null) {
+                sb.append(str);
+            }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
 
-
-    private String deexpandkey(String key) {
-        return key+key;
+        return sb;
     }
+    public Object writeFile() throws IOException {
+         FileWriter writer = new FileWriter("testout.txt");
+        BufferedWriter buffer = new BufferedWriter(writer);
+        buffer.write(crypt);
+        buffer.close();
+        System.out.println("Success");
 
-
-     public StringBuilder cryptString(String input) {
-         StringBuilder sb = null;
-         try (InputStream in = new FileInputStream(input);
-              BufferedReader r = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
-             String str = null;
-             sb = new StringBuilder(8192);
-             while ((str = r.readLine()) != null) {
-                 sb.append(str);
-             }
-         } catch (IOException ioe) {
-             ioe.printStackTrace();
-         }
-         return sb;
-     }
-
-   // FileWriter writer = new FileWriter("testout.txt");
-   // BufferedWriter buffer = new BufferedWriter(writer);
-     //   buffer.write(filcrypt);
-       // buffer.close();
-      //  System.out.println("Success");
+        return null;
+    }
 
     public static void main(String[] args) throws IOException {
-        String crypt = new String( "ㄈㄦW^ㄽ");
-        String message = new String("Tjena");
-        String key = new String("ㅜㅌ20");
+       // String crypt = new String( "ㄈㄦW^ㄽ");
+       // String message = new String("Tjena");
+       // String key = new String("ㅜㅌ20");
+        String m = "HEJ";
+        String k = "(((";
+        String f = "input.txt";
+
 
         model cryptmodel = new model();
-        String Crypterat = cryptmodel.cryptString(message,key);
-        System.out.println(Crypterat);
 
-        model decryptmodel = new model();
-        String Decrypterat = decryptmodel.cryptString(crypt,key);
-        System.out.println(Decrypterat);
+        cryptmodel.setMessage(m);
+        cryptmodel.setKey(k);
+        cryptmodel.cryptString();
+        cryptmodel.getCrypt();  
+        cryptmodel.setFile(f);
 
-        model inputmodel = new model();
-        String input = "input.txt";
-        StringBuilder x = inputmodel.cryptString(input);
-        System.out.println(x);
-
-        String filkeyinput = "key.txt";
-        StringBuilder filkey = inputmodel.cryptString(filkeyinput);
-        System.out.println(filkey);
+        System.out.println(cryptmodel.getCrypt());
 
 
-        message = String.valueOf(x);
-        key = String.valueOf(filkey);
-        String filcrypt = cryptmodel.cryptString(message,key);
-        System.out.println(filcrypt);
+        cryptmodel.writeFile();
 
-       // model writemodel = new model();
-       // Object write = writemodel.(filcrypt);
+        cryptmodel.cryptString();
+        cryptmodel.decryptString();
+
 
     }
+
+
+
 }

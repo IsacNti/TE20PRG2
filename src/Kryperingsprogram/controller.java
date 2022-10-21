@@ -1,26 +1,38 @@
 package Kryperingsprogram;
 
-public class controller {
-    public static void main(String[] args) {
-        String crypt = "ㄈㄦW^ㄽ";
-        String message = "Tjena";
-        String key = "ㅜㅌ20";
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
 
-        model cryptmodel = new model();
-        String Crypterat = cryptmodel.cryptString(message, key);
-        System.out.println(Crypterat);
+public class controller extends JFrame {
+    model model;
+    view view;
 
-        model decryptmodel = new model();
-        String Decrypterat = decryptmodel.cryptString(crypt, key);
-        System.out.println(Decrypterat);
+    public controller(model m, view v) {
+        this.model = m;
+        this.view = v;
+        this.setContentPane(view.getPanel());
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.pack();
+        this.setVisible(true);
+        view.setCryptListener(new cryptListener());
+    }
 
-        model inputmodel = new model();
-        String input = "input.txt";
-        StringBuilder x = inputmodel.cryptString(input);
-        System.out.println(x);
+    private class cryptListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            model.setMessage(view.getMessage());
+            model.setKey(view.getKey());
+            model.cryptString();
+            view.setCrypt(model.getCrypt());
+        }
+    }
 
-        message = String.valueOf(x);
-        String filcrypt = cryptmodel.cryptString(message,key);
-        System.out.println(filcrypt);
+    public static void main(String[] args) throws IOException {
+        model m = new model();
+        view v = new view();
+        controller thisIsTheProgram = new controller(m,v);
+        thisIsTheProgram.setVisible(true);
+
     }
 }
